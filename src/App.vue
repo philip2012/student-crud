@@ -1,0 +1,119 @@
+<!-- src/app.vue -->
+<script setup>
+import { ref, computed, onMounted, watch } from "vue";
+import AddStudent from "./assets/Components/AddStudent.vue";
+import RecordTable from "./assets/Components/RecordTable.vue";
+import StudentStatistics from "./assets/Components/StudentStatistics.vue";
+
+const students = ref([]);
+const editingStudent = ref(null);
+
+const initData = () => {
+  const sample = [
+    {
+      id: 1,
+      firstName: "Alice",
+      lastName: "Johnson",
+      math: 92,
+      science: 85,
+      english: 88,
+    },
+    {
+      id: 2,
+      firstName: "Bob",
+      lastName: "Smith",
+      math: 76,
+      science: 81,
+      english: 79,
+    },
+    {
+      id: 3,
+      firstName: "Charlie",
+      lastName: "Brown",
+      math: 65,
+      science: 70,
+      english: 72,
+    },
+  ];
+  students.value = sample;
+};
+
+onMounted(() => {
+  const saved = localStorage.getItem("students");
+  if (saved) {
+    try {
+      students.value = JSON.parse(saved);
+    } catch (e) {
+      console.error("Failed to parse saved students:", e);
+      initData();
+    }
+  } else {
+    initData();
+  }
+});
+
+const nextId = () =>
+  students.value.length ? Math.max(...students.value.map((s) => s.id)) + 1 : 1;
+
+const addStudent = (data) => {
+  students.value = [...students.value, { id: nextId(), ...data }];
+};
+
+const startEdit = (student) => {
+  editingStudent.value = { ...student };
+};
+
+const updateStudent = (updated) => {
+  students.value = students.value.map((s) =>
+    s.id === updated.id ? { ...updated } : s
+  );
+  editingStudent.value = null;
+};
+
+const deleteStudent = (id) => {
+  students.value = students.value.filter((s) => s.id !== id);
+  if (editingStudent.value?.id === id) editingStudent.value = null;
+};
+
+// optional (nếu muốn dùng ở đâu đó)
+const studentCount = computed(() => students.value.length);
+const globalAverage = computed(() => {
+  if (!students.value.length) return "0.0";
+  const total = students.value.reduce(
+    (sum, s) => sum + (s.math + s.science + s.english) / 3,
+    0
+  );
+  return (total / students.value.length).toFixed(1);
+});
+</script>
+
+<template>
+  <main class="min-h-screen bg-gray-50">
+    <div class="mx-auto max-w-7xl px-6 pt-10 flex flex-col gap-6">
+      <h1 class="text-3xl font-semibold text-center">
+        Student Management System (CRUD)
+      </h1>
+
+      <p class="text-gray-500 text-center">
+        Manage each student with CRUD operations with ease
+      </p>
+
+      <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <AddStudent
+          :student="editingStudent"
+          @add-student="addStudent"
+          @update-student="updateStudent"
+          @cancel-edit="editingStudent = null"
+        />
+
+        <StudentStatistics :students="students" />
+      </div>
+
+      <RecordTable
+        :students="students"
+        @edit="startEdit"
+        @delete="deleteStudent"
+      />
+    </div>
+  </main>
+</template>
