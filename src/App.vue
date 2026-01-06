@@ -51,28 +51,19 @@ watch(
 
 onMounted(() => {
   const saved = localStorage.getItem("students");
-  if (saved) {
-    try {
-      students.value = JSON.parse(saved);
-    } catch (e) {
-      console.error("Failed to parse saved students:", e);
-      initData();
-    }
-  } else {
-    initData();
-  }
-});
 
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
+
       if (Array.isArray(parsed) && parsed.length > 0) {
         students.value = parsed;
         isDemoData = false;
       } else {
         initDummyData();
       }
-    } catch {
+    } catch (e) {
+      console.error("Failed to parse saved students:", e);
       initDummyData();
     }
   } else {
@@ -97,12 +88,11 @@ const nextId = () =>
 
 const addStudent = (data) => {
   const { id, ...rest } = data;
-
   const newStudent = { ...rest, id: nextId() };
 
   if (isDemoData) {
     isDemoData = false;
-    students.value = [newStudent];
+    students.value = [newStudent]; // bỏ dummy luôn
     return;
   }
 
