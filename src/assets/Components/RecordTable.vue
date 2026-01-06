@@ -1,11 +1,11 @@
 <!-- src/assets/Components/RecordTable.vue -->
 <template>
   <section
-    class="w-full rounded-3xl bg-white shadow-xl ring-1 ring-black/5 overflow-hidden"
+    class="w-full rounded-3xl bg-white shadow-xl ring-1 ring-black/5 overflow-hidden text-sm"
   >
     <div class="px-8 py-6 flex items-start justify-between">
       <div>
-        <h2 class="text-3xl font-semibold text-slate-900">Student Records</h2>
+        <h2 class="text-2xl font-semibold text-slate-900">Student Records</h2>
         <p class="mt-1 text-slate-500">
           {{ students.length }} student<span v-if="students.length !== 1"
             >s</span
@@ -55,7 +55,7 @@
             </td>
 
             <td class="px-8 py-6">
-              <p class="text-2xl font-semibold text-slate-900 leading-tight">
+              <p class="text-lg font-semibold text-slate-900 leading-tight">
                 {{ s.firstName }} {{ s.lastName }}
               </p>
               <p class="mt-2 text-slate-500">
@@ -64,7 +64,7 @@
             </td>
 
             <td class="px-8 py-6">
-              <p class="text-2xl font-semibold text-slate-900">{{ s.math }}</p>
+              <p class="text-lg font-semibold text-slate-900">{{ s.math }}</p>
               <div
                 class="mt-3 h-3 w-28 rounded-full bg-slate-200 overflow-hidden"
               >
@@ -76,7 +76,7 @@
             </td>
 
             <td class="px-8 py-6">
-              <p class="text-2xl font-semibold text-slate-900">
+              <p class="text-lg font-semibold text-slate-900">
                 {{ s.science }}
               </p>
               <div
@@ -90,7 +90,7 @@
             </td>
 
             <td class="px-8 py-6">
-              <p class="text-2xl font-semibold text-slate-900">
+              <p class="text-lg font-semibold text-slate-900">
                 {{ s.english }}
               </p>
               <div
@@ -104,7 +104,7 @@
             </td>
 
             <td class="px-8 py-6">
-              <p class="text-4xl font-semibold text-slate-900">{{ avg(s) }}</p>
+              <p class="text-2xl font-semibold text-slate-900">{{ avg(s) }}</p>
               <div
                 class="mt-3 h-3 w-36 rounded-full bg-slate-200 overflow-hidden"
               >
@@ -127,14 +127,14 @@
             <td class="px-8 py-6">
               <div class="flex items-center gap-4">
                 <button
-                  class="px-8 py-4 rounded-2xl bg-blue-600 text-white text-lg font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700"
+                  class="px-8 py-4 rounded-2xl bg-blue-600 text-white text-sm font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700"
                   @click="emit('edit', s)"
                 >
                   Edit
                 </button>
 
                 <button
-                  class="px-8 py-4 rounded-2xl bg-red-600 text-white text-lg font-semibold shadow-lg shadow-red-200 hover:bg-red-700"
+                  class="px-8 py-4 rounded-2xl bg-red-600 text-white text-sm font-semibold shadow-lg shadow-red-200 hover:bg-red-700"
                   @click="emit('delete', s.id)"
                 >
                   Delete

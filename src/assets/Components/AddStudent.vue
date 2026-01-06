@@ -1,10 +1,10 @@
 <!-- src/assets/Components/AddStudent.vue -->
 <template>
   <section
-    class="w-full rounded-3xl bg-white shadow-xl ring-1 ring-black/5 p-8"
+    class="w-full rounded-3xl bg-white shadow-xl ring-1 ring-black/5 p-8 text-sm"
   >
     <div class="flex items-start justify-between gap-4">
-      <h2 class="text-3xl font-semibold text-slate-900">
+      <h2 class="text-2xl font-semibold text-slate-900">
         {{ isEditing ? "Edit Student" : "Add New Student" }}
       </h2>
 
@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <h3 class="mt-8 text-xl font-semibold text-slate-900">Scores (0-100)</h3>
+    <h3 class="mt-8 text-lg font-semibold text-slate-900">Scores (0-100)</h3>
 
     <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="flex flex-col gap-2">
@@ -89,7 +89,7 @@
 
     <div class="mt-8 rounded-2xl bg-slate-50 p-6">
       <div class="flex items-center justify-between">
-        <h4 class="text-lg font-semibold text-slate-900">
+        <h4 class="text-base font-semibold text-slate-900">
           Performance Summary
         </h4>
         <p class="text-slate-500">Average: {{ average }}</p>
@@ -97,7 +97,7 @@
 
       <div class="mt-4 flex items-center justify-between">
         <p class="text-slate-600">Total Score:</p>
-        <p class="text-lg font-semibold text-slate-900">{{ total }}/300</p>
+        <p class="text-base font-semibold text-slate-900">{{ total }}/300</p>
       </div>
 
       <div class="mt-4 h-3 w-full rounded-full bg-slate-200 overflow-hidden">
@@ -116,7 +116,7 @@
 
     <button
       type="button"
-      class="mt-8 h-14 w-full rounded-xl bg-blue-600 text-white text-lg font-semibold shadow-sm hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50"
+      class="mt-8 h-14 w-full rounded-xl bg-blue-600 text-white text-base font-semibold shadow-sm hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50"
       :disabled="!canSubmit"
       @click="submit"
     >

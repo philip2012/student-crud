@@ -1,13 +1,13 @@
 <!-- src/assets/Components/StudentStatistics.vue -->
 <template>
   <section
-    class="w-full rounded-3xl bg-white shadow-xl ring-1 ring-black/5 p-8"
+    class="w-full rounded-3xl bg-white shadow-xl ring-1 ring-black/5 p-8 text-sm"
   >
     <h2 class="text-3xl font-semibold text-slate-900 mb-6">Statistics</h2>
 
     <div class="rounded-2xl border border-slate-200 bg-sky-50/70 p-6">
       <p class="text-slate-600 font-medium">Total Students</p>
-      <p class="mt-2 text-5xl font-bold text-blue-600 leading-none">
+      <p class="mt-2 text-3xl font-bold text-blue-600 leading-none">
         {{ stats.totalStudents }}
       </p>
     </div>
@@ -15,21 +15,21 @@
     <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="rounded-2xl border border-slate-200 bg-emerald-50/70 p-6">
         <p class="text-slate-600 font-medium">Avg Math</p>
-        <p class="mt-3 text-4xl font-bold text-emerald-600 leading-none">
+        <p class="mt-3 text-2xl font-bold text-emerald-600 leading-none">
           {{ stats.avgMath.toFixed(1) }}
         </p>
       </div>
 
       <div class="rounded-2xl border border-slate-200 bg-sky-50/70 p-6">
         <p class="text-slate-600 font-medium">Avg Science</p>
-        <p class="mt-3 text-4xl font-bold text-sky-600 leading-none">
+        <p class="mt-3 text-2xl font-bold text-sky-600 leading-none">
           {{ stats.avgScience.toFixed(1) }}
         </p>
       </div>
 
       <div class="rounded-2xl border border-slate-200 bg-violet-50/70 p-6">
         <p class="text-slate-600 font-medium">Avg English</p>
-        <p class="mt-3 text-4xl font-bold text-violet-600 leading-none">
+        <p class="mt-3 text-2xl font-bold text-violet-600 leading-none">
           {{ stats.avgEnglish.toFixed(1) }}
         </p>
       </div>
@@ -39,7 +39,7 @@
       <p class="text-slate-700 font-medium">Average Overall Score</p>
 
       <div class="mt-3 flex items-end gap-3">
-        <p class="text-5xl font-extrabold text-amber-600 leading-none">
+        <p class="text-3xl font-extrabold text-amber-600 leading-none">
           {{ stats.avgOverall.toFixed(1) }}
         </p>
       </div>
