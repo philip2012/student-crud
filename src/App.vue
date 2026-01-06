@@ -38,6 +38,14 @@ const initData = () => {
   students.value = sample;
 };
 
+watch(
+  students,
+  (newVal) => {
+    localStorage.setItem("students", JSON.stringify(newVal));
+  },
+  { deep: true }
+);
+
 onMounted(() => {
   const saved = localStorage.getItem("students");
   if (saved) {
@@ -88,9 +96,9 @@ const globalAverage = computed(() => {
 </script>
 
 <template>
-  <main class="min-h-screen bg-gray-50">
+  <main class="min-h-screen bg-gray-50 text-sm">
     <div class="mx-auto max-w-7xl px-6 pt-10 flex flex-col gap-6">
-      <h1 class="text-3xl font-semibold text-center">
+      <h1 class="text-2xl font-semibold text-center">
         Student Management System (CRUD)
       </h1>
 
