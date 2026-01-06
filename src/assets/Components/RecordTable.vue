@@ -69,7 +69,7 @@
                 class="mt-3 h-3 w-28 rounded-full bg-slate-200 overflow-hidden"
               >
                 <div
-                  class="h-full rounded-full bg-orange-500"
+                  class="h-full rounded-full bg-fuchsia-500"
                   :style="{ width: `${s.math}%` }"
                 ></div>
               </div>

@@ -8,8 +8,12 @@ import StudentStatistics from "./assets/Components/StudentStatistics.vue";
 const students = ref([]);
 const editingStudent = ref(null);
 
-const initData = () => {
-  const sample = [
+let isHydrating = true;
+let isDemoData = false;
+
+const initDummyData = () => {
+  isDemoData = true;
+  students.value = [
     {
       id: 1,
       firstName: "Alice",
@@ -35,7 +39,6 @@ const initData = () => {
       english: 72,
     },
   ];
-  students.value = sample;
 };
 
 watch(
@@ -60,11 +63,50 @@ onMounted(() => {
   }
 });
 
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        students.value = parsed;
+        isDemoData = false;
+      } else {
+        initDummyData();
+      }
+    } catch {
+      initDummyData();
+    }
+  } else {
+    initDummyData();
+  }
+
+  isHydrating = false;
+});
+
+watch(
+  students,
+  (newVal) => {
+    if (isHydrating) return;
+    if (isDemoData) return;
+    localStorage.setItem("students", JSON.stringify(newVal));
+  },
+  { deep: true }
+);
+
 const nextId = () =>
   students.value.length ? Math.max(...students.value.map((s) => s.id)) + 1 : 1;
 
 const addStudent = (data) => {
-  students.value = [...students.value, { id: nextId(), ...data }];
+  const { id, ...rest } = data;
+
+  const newStudent = { ...rest, id: nextId() };
+
+  if (isDemoData) {
+    isDemoData = false;
+    students.value = [newStudent];
+    return;
+  }
+
+  students.value = [...students.value, newStudent];
 };
 
 const startEdit = (student) => {
@@ -79,8 +121,10 @@ const updateStudent = (updated) => {
 };
 
 const deleteStudent = (id) => {
-  students.value = students.value.filter((s) => s.id !== id);
-  if (editingStudent.value?.id === id) editingStudent.value = null;
+  const targetId = Number(id);
+  students.value = students.value.filter((s) => s.id !== targetId);
+
+  if (editingStudent.value?.id === targetId) editingStudent.value = null;
 };
 
 // optional (nếu muốn dùng ở đâu đó)
