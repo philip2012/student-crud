@@ -13,8 +13,23 @@
           found
         </p>
       </div>
+      <div class="flex flex-row gap-4 items-center">
+        <input
+          type="text"
+          name="search"
+          id="search"
+          placeholder="Enter name here"
+          class="w-105 rounded-lg border border-slate-200 bg-white px-4 py-2 text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500/30"
+          :value="nameQuery"
+          @input="emit('update:name-query', $event.target.value)"
+        />
 
-      <p class="text-slate-500">Showing all students</p>
+        <p class="text-slate-500">
+          {{
+            nameQuery ? `Filtering by "${nameQuery}"` : "Showing all students"
+          }}
+        </p>
+      </div>
     </div>
 
     <div class="h-px bg-slate-200"></div>
@@ -177,9 +192,13 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  nameQuery: {
+    type: String,
+    required: false,
+  },
 });
 
-const emit = defineEmits(["edit", "delete"]);
+const emit = defineEmits(["edit", "delete", "update:name-query"]);
 
 const avg = (s) => ((s.math + s.science + s.english) / 3).toFixed(1);
 

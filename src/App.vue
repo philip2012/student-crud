@@ -7,6 +7,7 @@ import StudentStatistics from "./assets/Components/StudentStatistics.vue";
 
 const students = ref([]);
 const editingStudent = ref(null);
+const nameQuery = ref("");
 
 const initData = () => {
   const sample = [
@@ -50,6 +51,15 @@ onMounted(() => {
   } else {
     initData();
   }
+});
+
+const filteredStudents = computed(() => {
+  const input = nameQuery.value.trim().toLowerCase();
+  if (!input) return students.value;
+  return students.value.filter((student) => {
+    const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
+    return fullName.includes(input);
+  });
 });
 
 const nextId = () =>
@@ -110,9 +120,11 @@ const globalAverage = computed(() => {
       </div>
 
       <RecordTable
-        :students="students"
+        :students="filteredStudents"
+        :name-query="nameQuery"
         @edit="startEdit"
         @delete="deleteStudent"
+        @update:name-query="nameQuery = $event"
       />
     </div>
   </main>
