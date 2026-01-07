@@ -25,13 +25,66 @@
           <tr
             class="text-left text-xs font-medium tracking-widest text-slate-500 uppercase"
           >
-            <th class="px-8 py-4 w-55">ID</th>
-            <th class="px-8 py-4 w-[320px]">Student Info</th>
-            <th class="px-8 py-4 w-40">Math</th>
-            <th class="px-8 py-4 w-40">Science</th>
-            <th class="px-8 py-4 w-40">English</th>
-            <th class="px-8 py-4 w-55">Average</th>
-            <th class="px-8 py-4 w-40">Ranking</th>
+            <th class="px-8 py-4 w-55">
+              <button class="hover:text-slate-900" @click="emit('sort', 'id')">
+                ID{{ arrow("id") }}
+              </button>
+            </th>
+
+            <th class="px-8 py-4 w-[320px]">
+              <button
+                class="hover:text-slate-900"
+                @click="emit('sort', 'student')"
+              >
+                Student Info{{ arrow("student") }}
+              </button>
+            </th>
+
+            <th class="px-8 py-4 w-40">
+              <button
+                class="hover:text-slate-900"
+                @click="emit('sort', 'math')"
+              >
+                Math{{ arrow("math") }}
+              </button>
+            </th>
+
+            <th class="px-8 py-4 w-40">
+              <button
+                class="hover:text-slate-900"
+                @click="emit('sort', 'science')"
+              >
+                Science{{ arrow("science") }}
+              </button>
+            </th>
+
+            <th class="px-8 py-4 w-40">
+              <button
+                class="hover:text-slate-900"
+                @click="emit('sort', 'english')"
+              >
+                English{{ arrow("english") }}
+              </button>
+            </th>
+
+            <th class="px-8 py-4 w-55">
+              <button
+                class="hover:text-slate-900"
+                @click="emit('sort', 'average')"
+              >
+                Average{{ arrow("average") }}
+              </button>
+            </th>
+
+            <th class="px-8 py-4 w-40">
+              <button
+                class="hover:text-slate-900"
+                @click="emit('sort', 'ranking')"
+              >
+                Ranking{{ arrow("ranking") }}
+              </button>
+            </th>
+
             <th class="px-8 py-4 w-55">Actions</th>
           </tr>
         </thead>
@@ -47,7 +100,7 @@
             <td class="px-8 py-6">
               <div class="flex items-center gap-4">
                 <div
-                  class="h-16 w-16 rounded-full bg-blue-50 flex items-center justify-center font-semibold text-blue-700"
+                  class="h-16 w-14 rounded-full bg-blue-50 flex items-center justify-center font-semibold text-blue-700"
                 >
                   #{{ String(s.id).padStart(3, "0") }}
                 </div>
@@ -83,7 +136,7 @@
                 class="mt-3 h-3 w-28 rounded-full bg-slate-200 overflow-hidden"
               >
                 <div
-                  class="h-full rounded-full bg-orange-500"
+                  class="h-full rounded-full bg-fuchsia-500"
                   :style="{ width: `${s.science}%` }"
                 ></div>
               </div>
@@ -173,13 +226,17 @@
 import { computed } from "vue";
 
 const props = defineProps({
-  students: {
-    type: Array,
-    required: true,
-  },
+  students: { type: Array, required: true },
+  sortKey: { type: String, required: true },
+  sortDir: { type: String, required: true },
 });
 
-const emit = defineEmits(["edit", "delete"]);
+const emit = defineEmits(["edit", "delete", "sort"]);
+
+const arrow = (key) => {
+  if (props.sortKey !== key) return "";
+  return props.sortDir === "asc" ? " ▲" : " ▼";
+};
 
 const avg = (s) => ((s.math + s.science + s.english) / 3).toFixed(1);
 
