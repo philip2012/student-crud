@@ -7,6 +7,7 @@ import StudentStatistics from "./assets/Components/StudentStatistics.vue";
 
 const students = ref([]);
 const editingStudent = ref(null);
+const nameQuery = ref("");
 
 // --- sort state (default: new -> old) --- //
 const sortKey = ref("id"); // id = new/old
@@ -24,8 +25,18 @@ const setSort = (key) => {
   sortDir.value = "asc";
 };
 
-const sortedStudents = computed(() => {
+const displayStudents = computed(() => {
+  const q = nameQuery.value.trim().toLowerCase();
+
+  const filtered = !q
+    ? students.value
+    : students.value.filter((s) =>
+        `${s.firstName} ${s.lastName}`.toLowerCase().includes(q)
+      );
+
   const dir = sortDir.value === "asc" ? 1 : -1;
+
+  const avgOf = (s) => (s.math + s.science + s.english) / 3;
 
   const getValue = (s) => {
     if (sortKey.value === "id") return s.id;
@@ -39,7 +50,7 @@ const sortedStudents = computed(() => {
     return s.id;
   };
 
-  return [...students.value].sort((a, b) => {
+  return [...filtered].sort((a, b) => {
     const av = getValue(a);
     const bv = getValue(b);
 
@@ -49,8 +60,6 @@ const sortedStudents = computed(() => {
 
     if (av < bv) return -1 * dir;
     if (av > bv) return 1 * dir;
-
-    // tie-breaker: stable theo new -> old
     return b.id - a.id;
   });
 });
@@ -166,12 +175,14 @@ const globalAverage = computed(() => {
       </div>
 
       <RecordTable
-        :students="sortedStudents"
+        :students="displayStudents"
         :sort-key="sortKey"
         :sort-dir="sortDir"
+        :name-query="nameQuery"
         @sort="setSort"
         @edit="startEdit"
         @delete="deleteStudent"
+        @update:name-query="nameQuery = $event"
       />
     </div>
   </main>
