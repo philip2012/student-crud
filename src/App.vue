@@ -16,30 +16,76 @@ const initDummyData = () => {
   students.value = [
     {
       id: 1,
-      firstName: "Alice",
-      lastName: "Johnson",
-      math: 92,
-      science: 85,
-      english: 88,
+      firstName: "John",
+      lastName: "Doe",
+      math: 85,
+      science: 90,
+      english: 78,
     },
     {
       id: 2,
-      firstName: "Bob",
+      firstName: "Jane",
       lastName: "Smith",
-      math: 76,
-      science: 81,
-      english: 79,
+      math: 92,
+      science: 88,
+      english: 95,
     },
     {
       id: 3,
-      firstName: "Charlie",
-      lastName: "Brown",
-      math: 65,
-      science: 70,
-      english: 72,
+      firstName: "Mike",
+      lastName: "Johnson",
+      math: 70,
+      science: 75,
+      english: 80,
     },
   ];
 };
+// --- sort state (default: new -> old) --- //
+const sortKey = ref("id"); // id = new/old
+const sortDir = ref("desc"); // desc = new -> old
+
+const avgOf = (s) => (s.math + s.science + s.english) / 3;
+
+const setSort = (key) => {
+  if (sortKey.value === key) {
+    sortDir.value = sortDir.value === "asc" ? "desc" : "asc";
+    return;
+  }
+
+  sortKey.value = key;
+  sortDir.value = "asc";
+};
+
+const sortedStudents = computed(() => {
+  const dir = sortDir.value === "asc" ? 1 : -1;
+
+  const getValue = (s) => {
+    if (sortKey.value === "id") return s.id;
+    if (sortKey.value === "student")
+      return `${s.firstName} ${s.lastName}`.trim().toLowerCase();
+    if (sortKey.value === "math") return s.math;
+    if (sortKey.value === "science") return s.science;
+    if (sortKey.value === "english") return s.english;
+    if (sortKey.value === "average") return avgOf(s);
+    if (sortKey.value === "ranking") return avgOf(s);
+    return s.id;
+  };
+
+  return [...students.value].sort((a, b) => {
+    const av = getValue(a);
+    const bv = getValue(b);
+
+    if (typeof av === "string" && typeof bv === "string") {
+      return av.localeCompare(bv) * dir;
+    }
+
+    if (av < bv) return -1 * dir;
+    if (av > bv) return 1 * dir;
+
+    // tie-breaker: stable theo new -> old
+    return b.id - a.id;
+  });
+});
 
 watch(
   students,
@@ -95,8 +141,7 @@ const addStudent = (data) => {
     students.value = [newStudent]; // bỏ dummy luôn
     return;
   }
-
-  students.value = [...students.value, newStudent];
+  students.value = [...students.value, { ...rest, id: nextId() }];
 };
 
 const startEdit = (student) => {
@@ -131,7 +176,7 @@ const globalAverage = computed(() => {
 
 <template>
   <main class="min-h-screen bg-gray-50 text-sm">
-    <div class="mx-auto max-w-7xl px-6 pt-10 flex flex-col gap-6">
+    <div class="mx-auto max-w-8xl px-6 pt-10 flex flex-col gap-6">
       <h1 class="text-2xl font-semibold text-center">
         Student Management System (CRUD)
       </h1>
@@ -152,7 +197,10 @@ const globalAverage = computed(() => {
       </div>
 
       <RecordTable
-        :students="students"
+        :students="sortedStudents"
+        :sort-key="sortKey"
+        :sort-dir="sortDir"
+        @sort="setSort"
         @edit="startEdit"
         @delete="deleteStudent"
       />
