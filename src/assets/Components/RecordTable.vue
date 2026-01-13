@@ -7,7 +7,8 @@
       <div>
         <h2 class="text-2xl font-semibold text-slate-900">Student Records</h2>
         <p class="mt-1 text-slate-500">
-          {{ students.length }} student<span v-if="students.length !== 1"
+          {{ props.students.length }} student<span
+            v-if="props.students.length !== 1"
             >s</span
           >
           found
@@ -15,6 +16,27 @@
       </div>
 
       <div class="flex flex-row gap-4 items-center">
+        <label
+          class="inline-flex items-center gap-3 cursor-pointer select-none"
+        >
+          <input
+            type="checkbox"
+            class="peer sr-only"
+            @change="
+              listMode = $event.target.checked ? 'infinite' : 'pagination'
+            "
+            :checked="listMode === 'infinite'"
+          />
+
+          <div
+            class="relative h-6 w-11 rounded-full bg-blue-600 ring-1 ring-black/10 transition peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5"
+          ></div>
+
+          <span class="text-sm font-medium text-gray-900">{{
+            capitalizedModeString
+          }}</span>
+        </label>
+
         <input
           type="text"
           name="search"
@@ -106,13 +128,13 @@
         </thead>
 
         <tbody class="divide-y divide-slate-200">
-          <tr v-if="students.length === 0">
+          <tr v-if="props.students.length === 0">
             <td colspan="8" class="px-8 py-10 text-slate-500">
               No students yet. Add one on the left.
             </td>
           </tr>
 
-          <tr v-for="s in students" :key="s.id" class="align-middle">
+          <tr v-for="s in studentsToRender" :key="s.id" class="align-middle">
             <td class="px-8 py-6">
               <div class="flex items-center gap-4">
                 <div
@@ -217,6 +239,73 @@
 
     <div class="h-px bg-slate-200"></div>
 
+    <div>
+      <div
+        v-if="listMode === 'pagination' && totalStudents > 0"
+        class="px-8 py-6"
+      >
+        <nav aria-label="Pagination" class="flex justify-center">
+          <ul class="flex items-center gap-2 text-sm">
+            <!-- Prev -->
+            <li>
+              <button
+                type="button"
+                aria-label="Previous page"
+                :disabled="page === 1"
+                @click="page = Math.max(1, page - 1)"
+                class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Prev
+              </button>
+            </li>
+
+            <!-- Page numbers -->
+            <li v-for="p in totalPages" :key="p">
+              <button
+                type="button"
+                :aria-current="p === page ? 'page' : null"
+                @click="page = p"
+                class="h-10 w-10 rounded-lg border flex items-center justify-center transition"
+                :class="
+                  p === page
+                    ? 'bg-blue-600 border-blue-600 text-white font-semibold'
+                    : 'border-slate-300 text-slate-700 hover:bg-slate-100'
+                "
+              >
+                {{ p }}
+              </button>
+            </li>
+
+            <!-- Next -->
+            <li>
+              <button
+                type="button"
+                aria-label="Next page"
+                :disabled="page === totalPages"
+                @click="page = Math.min(totalPages, page + 1)"
+                class="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <div
+        v-if="listMode === 'infinite' && visibleCount < totalStudents"
+        class="px-8 py-6 flex justify-center"
+      >
+        <button
+          type="button"
+          @click="visibleCount = Math.min(totalStudents, visibleCount + step)"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-[0.98] transition"
+        >
+          Load More
+        </button>
+      </div>
+    </div>
+
     <div class="px-8 py-5 flex items-center justify-between text-slate-600">
       <p>
         <span class="font-semibold text-slate-700">Summary:</span>
@@ -239,7 +328,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 const props = defineProps({
   students: { type: Array, required: true },
@@ -248,7 +337,46 @@ const props = defineProps({
   nameQuery: { type: String, required: true },
 });
 
-const emit = defineEmits(["edit", "delete", "sort"]);
+const listMode = ref("pagination");
+
+const capitalizedModeString = computed(() => {
+  return listMode.value.charAt(0).toUpperCase() + listMode.value.slice(1);
+});
+
+const page = ref(1);
+const visibleCount = ref(15);
+
+const pageSize = 5;
+const step = 15;
+
+const studentsToRender = computed(() => {
+  const start = (page.value - 1) * pageSize;
+  const end = start + pageSize;
+
+  if (listMode.value === "pagination") {
+    return props.students.slice(start, end);
+  } else if (listMode.value === "infinite") {
+    return props.students.slice(0, visibleCount.value);
+  } else {
+    return [];
+  }
+});
+
+const totalStudents = computed(() => {
+  return props.students.length;
+});
+const totalPages = computed(() => {
+  if (totalStudents.value === 0) {
+    return 1;
+  }
+  return Math.ceil(totalStudents.value / pageSize);
+});
+
+watch(totalPages, (newVal) => {
+  page.value = Math.min(Math.max(1, page.value), newVal);
+});
+
+const emit = defineEmits(["edit", "delete", "sort", "update:name-query"]);
 
 const arrow = (key) => {
   if (props.sortKey !== key) return "";
